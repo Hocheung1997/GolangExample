@@ -8,5 +8,21 @@
 3. parsing user's input, try to bind the user input to the config struct.  
 4. validate the data if it's out of expectations.  
 5. implement with the config struct.  
-6. write the testing cases in Unit test file(example: parse_args_test.go), when we have updates in the scripts, we can have the test cases which we tested before.
+6. write the testing cases in Unit test file(example: parse_args_test.go), when we have updates in the scripts, we can have the test cases which we tested before.  
 
+###  execute shell(powershell) command:
+1. run with GO command  
+```
+go run main.go -h
+```
+2. execute all the Unit test files
+```
+go test -v
+```
+3. build up the binary executable file
+```
+go build -o applications.exe
+```
+```
+./applications.exe -h
+```
