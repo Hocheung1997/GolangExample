@@ -44,10 +44,10 @@ func TestParseArgs(t *testing.T) {
 			t.Errorf("expected nil error, got: %v\n", err)
 		}
 		if c.printUsage != tc.config.printUsage {
-			t.Errorf("Expected printUsage to be: %v, got: %v\n", tc.config.printUsage, c.printUsage)
+			t.Errorf("expected printUsage to be: %v, got: %v\n", tc.config.printUsage, c.printUsage)
 		}
 		if c.numTimes != tc.config.numTimes {
-			t.Errorf("Expected numTimes to be: %v, got: %v", tc.config.numTimes, c.numTimes)
+			t.Errorf("expected numTimes to be: %v, got: %v", tc.config.numTimes, c.numTimes)
 		}
 	}
 }

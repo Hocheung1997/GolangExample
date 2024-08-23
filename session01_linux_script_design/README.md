@@ -26,3 +26,7 @@ go build -o applications.exe
 ```
 ./applications.exe -h
 ```
+4. check the test coverage  
+```
+go test -cover
+```

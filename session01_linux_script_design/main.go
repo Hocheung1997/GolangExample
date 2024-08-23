@@ -32,7 +32,7 @@ type config struct {
 // this function is for recieving user output, bytes.Buffer and os.Stdout can as parameter
 // in this function, if you want to check user's input separate, you can create the bytes.Buffer
 func getName(r io.Reader, w io.Writer) (string, error) {
-	msg := "pleae input your name, press enter to process:\n"
+	msg := "please input your name, press enter to process:\n"
 	fmt.Fprintf(w, "%s", msg)
 
 	scanner := bufio.NewScanner(r)
@@ -86,7 +86,7 @@ func vaildateArgs(c config) error {
 // this is the entrance of executing the scripts' actions
 func runCmd(r io.Reader, w io.Writer, c config) error {
 	if c.printUsage {
-		fmt.Fprint(w, "usage example: ./application 6")
+		fmt.Fprint(w, usageString)
 		return nil
 	}
 	name, err := getName(r, w)
