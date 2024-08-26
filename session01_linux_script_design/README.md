@@ -1,5 +1,6 @@
 # session01-linux-scripts-design
 ##  Comparing Linux Shell scripts, Go scripts can be more flexible. This script example is a simple interactive function, it includes "scripts argument" "user input" and "result prompt", but we can give the script types of checking in the implementation code.  
+(flag-parse just is the experiment to use 'flag' package, 'flag' is the tool for parsing the script arguments. We will use on the next session.)
 
 ###  ♥design logic:
 ###
