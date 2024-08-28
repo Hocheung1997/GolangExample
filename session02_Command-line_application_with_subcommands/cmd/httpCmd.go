@@ -16,15 +16,17 @@ func HandleHttp(w io.Writer, args []string) error {
 	fs := flag.NewFlagSet("http", flag.ContinueOnError)
 	fs.SetOutput(w)
 	fs.StringVar(&v, "verb", "GET", "HTTP method")
+
 	fs.Usage = func() {
 		var usageString = `
-		http: A HTTP client.
-		
-		http: <options> server`
-		fmt.Fprint(w, usageString)
-		fmt.Fprint(w)
-		fmt.Fprint(w)
-		fmt.Fprint(w, "Options:")
+http: A HTTP client.
+
+http: <options> server`
+		fmt.Fprintf(w, usageString)
+
+		fmt.Fprintln(w)
+		fmt.Fprintln(w)
+		fmt.Fprintln(w, "Options: ")
 		fs.PrintDefaults()
 	}
 
@@ -34,7 +36,7 @@ func HandleHttp(w io.Writer, args []string) error {
 	}
 
 	if fs.NArg() != 1 {
-		return ErrNoServiceSpecified
+		return ErrNoServerSpecified
 	}
 
 	c := httpConfig{verb: v}

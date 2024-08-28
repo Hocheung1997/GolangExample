@@ -7,22 +7,14 @@ import (
 )
 
 func TestHandleHttp(t *testing.T) {
-	usageMessage := `Usage: mync [http|grpc] -h
-	
-                http: A HTTP client.
+	usageMessage := `
+http: A HTTP client.
 
-                http: <options> serverOptions:  -verb string
-        HTTP method (default "GET")
+http: <options> server
 
-                grpc: A gRPC client.
-
-                grpc: <options> server
-
-Options:
-  -body string
-        body of request
-  -method string
-        Method to call
+Options: 
+  -verb string
+    	HTTP method (default "GET")
 `
 	testConfigs := []struct {
 		args   []string
@@ -31,7 +23,7 @@ Options:
 	}{
 		{
 			args: []string{},
-			err:  ErrNoServiceSpecified,
+			err:  ErrNoServerSpecified,
 		},
 		{
 			args:   []string{"-h"},
@@ -44,22 +36,23 @@ Options:
 			output: "Executing http command\n",
 		},
 	}
-
 	byteBuf := new(bytes.Buffer)
 	for _, tc := range testConfigs {
 		err := HandleHttp(byteBuf, tc.args)
 		if tc.err == nil && err != nil {
-			t.Fatalf("expected nil error, got %v", err)
+			t.Fatalf("Expected nil error, got %v", err)
 		}
+
 		if tc.err != nil && err.Error() != tc.err.Error() {
-			t.Fatalf("expected error %v, got %v", tc.err, tc.err.Error())
+			t.Fatalf("Expected error %v, got %v", tc.err, err)
 		}
+
 		if len(tc.output) != 0 {
 			gotOutput := byteBuf.String()
 			if tc.output != gotOutput {
-				t.Errorf("expected output to be: %#v, Got: %#v", tc.output, gotOutput)
+				t.Errorf("Expected output to be: %#v, Got: %#v", tc.output, gotOutput)
 			}
 		}
+		byteBuf.Reset()
 	}
-	byteBuf.Reset()
 }

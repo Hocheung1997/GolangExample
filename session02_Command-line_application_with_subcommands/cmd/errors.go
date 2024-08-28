@@ -2,4 +2,4 @@ package cmd
 
 import "errors"
 
-var ErrNoServiceSpecified = errors.New("you have to specify the remote server")
+var ErrNoServerSpecified = errors.New("You have to specify the remote server.")
