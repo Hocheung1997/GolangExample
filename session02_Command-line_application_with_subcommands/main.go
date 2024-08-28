@@ -35,7 +35,7 @@ func handleCommand(w io.Writer, args []string) error {
 			err = errInvaklidSubcommand
 		}
 	}
-	if errors.Is(err, cmd.ErrNoServiceSpecified) || errors.Is(err, errInvaklidSubcommand) {
+	if errors.Is(err, cmd.ErrNoServerSpecified) || errors.Is(err, errInvaklidSubcommand) {
 		fmt.Fprintln(w, err)
 		printUsage(w)
 	}
