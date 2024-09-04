@@ -11,11 +11,13 @@ import (
 	"time"
 )
 
+// It is typically used by the main function.
 func createContextWithTimeout(d time.Duration) (context.Context, context.CancelFunc) {
 	ctx, cancel := context.WithTimeout(context.Background(), d)
 	return ctx, cancel
 }
 
+// use cancel function if get system "Kill"
 func setupSignalHandler(w io.Writer, cancelFunc context.CancelFunc) {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
@@ -36,10 +38,7 @@ func main() {
 		os.Exit(1)
 	}
 	command := os.Args[1]
-	fmt.Printf("Type of command: %T\n", command)
 	arg := os.Args[2]
-	fmt.Printf("Type of arg: %T\n", arg)
-
 	cmdTimeout := 30 * time.Second
 	ctx, cancel := createContextWithTimeout(cmdTimeout)
 	defer cancel()

@@ -1,14 +1,29 @@
 package cmd
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"io"
+	"net/http"
 )
 
 type httpConfig struct {
 	url  string
 	verb string
+}
+
+func fetchRemoteResource(verb string, url string) ([]byte, int, error) {
+	if verb == "GET" {
+		r, err := http.Get(url)
+		if err != nil {
+			return nil, 0, err
+		}
+		defer r.Body.Close()
+		responseBody, err := io.ReadAll(r.Body)
+		return responseBody, r.StatusCode, err
+	}
+	return nil, 0, errors.New("inputed verb not be supported yet")
 }
 
 func HandleHttp(w io.Writer, args []string) error {
@@ -22,7 +37,7 @@ func HandleHttp(w io.Writer, args []string) error {
 http: A HTTP client.
 
 http: <options> server`
-		fmt.Fprintf(w, usageString)
+		fmt.Fprint(w, usageString)
 
 		fmt.Fprintln(w)
 		fmt.Fprintln(w)
@@ -41,6 +56,15 @@ http: <options> server`
 
 	c := httpConfig{verb: v}
 	c.url = fs.Arg(0)
-	fmt.Fprintln(w, "Executing http command")
+	_, returnCode, err := fetchRemoteResource(c.verb, c.url)
+	if err != nil {
+		return err
+	}
+	if returnCode == 200 {
+		fmt.Fprint(w, returnCode)
+	} else {
+		return errors.New("http error code")
+	}
+
 	return nil
 }

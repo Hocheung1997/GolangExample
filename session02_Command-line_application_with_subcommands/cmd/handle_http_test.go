@@ -3,6 +3,7 @@ package cmd
 import (
 	"bytes"
 	"errors"
+	"strconv"
 	"testing"
 )
 
@@ -17,9 +18,10 @@ Options:
     	HTTP method (default "GET")
 `
 	testConfigs := []struct {
-		args   []string
-		output string
-		err    error
+		args       []string
+		output     string
+		err        error
+		statusCode int
 	}{
 		{
 			args: []string{},
@@ -31,9 +33,9 @@ Options:
 			output: usageMessage,
 		},
 		{
-			args:   []string{"http://localhost"},
-			err:    nil,
-			output: "Executing http command\n",
+			args:       []string{"https://www.example.com/"},
+			err:        nil,
+			statusCode: 200,
 		},
 	}
 	byteBuf := new(bytes.Buffer)
@@ -47,10 +49,10 @@ Options:
 			t.Fatalf("Expected error %v, got %v", tc.err, err)
 		}
 
-		if len(tc.output) != 0 {
-			gotOutput := byteBuf.String()
-			if tc.output != gotOutput {
-				t.Errorf("Expected output to be: %#v, Got: %#v", tc.output, gotOutput)
+		if tc.statusCode != 0 {
+			returnedStatusCode := byteBuf.String()
+			if strconv.Itoa(tc.statusCode) != returnedStatusCode {
+				t.Errorf("Expected output to be: %d, Got: %s", tc.statusCode, returnedStatusCode)
 			}
 		}
 		byteBuf.Reset()
