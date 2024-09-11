@@ -7,13 +7,6 @@ import (
 	"mime/multipart"
 )
 
-type pkgData struct {
-	Name     string
-	Version  string
-	Filename string
-	Bytes    io.Reader
-}
-
 func createMultipartMessage(data pkgData) ([]byte, string, error) {
 	var b bytes.Buffer
 	var err error
@@ -31,8 +24,16 @@ func createMultipartMessage(data pkgData) ([]byte, string, error) {
 	if err != nil {
 		return nil, "", err
 	}
+	fmt.Fprintf(fw, data.Version)
 
+	fw, err = mw.CreateFormFile("filedata", data.Filename)
+	if err != nil {
+		return nil, "", err
+	}
 	_, err = io.Copy(fw, data.Bytes)
+	if err != nil {
+		return nil, "", err
+	}
 	err = mw.Close()
 	if err != nil {
 		return nil, "", err
