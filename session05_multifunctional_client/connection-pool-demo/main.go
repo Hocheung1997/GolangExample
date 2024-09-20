@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -11,8 +12,19 @@ import (
 	"time"
 )
 
-func createHTTPClientWithTimeout(d time.Duration) *http.Client {
-	client := http.Client{Timeout: d}
+type cmdArgs struct {
+	url          string
+	numRequests  int
+	maxIdleConns int
+}
+
+func createHTTPClientWithTimeout(maxIdleConn int, d time.Duration) *http.Client {
+
+	transport := http.Transport{
+		MaxIdleConns:    maxIdleConn,
+		IdleConnTimeout: 30 * time.Second,
+	}
+	client := http.Client{Timeout: d, Transport: &transport}
 	return &client
 
 }
@@ -39,16 +51,43 @@ func createHTTPGetRequestWithTrace(ctx context.Context, url string) (*http.Reque
 	return req, err
 }
 
+func (c *cmdArgs) createFlagSet(w io.Writer) *flag.FlagSet {
+	fs := flag.NewFlagSet("http", flag.ContinueOnError)
+	fs.StringVar(&c.url, "url", "", "input URL")
+	fs.IntVar(&c.numRequests, "numRequests", 1, "input the number of requests you need")
+	fs.IntVar(&c.maxIdleConns, "maxIdleConns", 1, "input the max number of idle connection")
+	fs.Usage = func() {
+		var usageString = `
+http: A HTTP client.
+`
+		fmt.Fprint(w, usageString)
+		fmt.Fprintln(w)
+		fmt.Fprintln(w)
+		fmt.Fprintln(w, "Options: ")
+		fs.PrintDefaults()
+	}
+	return fs
+}
+
 func main() {
+	var c cmdArgs
+	fs := c.createFlagSet(os.Stdout)
+	err := fs.Parse(os.Args[1:])
+	if err != nil {
+		fmt.Println("error in parsing argumment")
+		os.Exit(1)
+	}
+
 	d := 5 * time.Second
 	ctx := context.Background()
-	client := createHTTPClientWithTimeout(d)
+	client := createHTTPClientWithTimeout(c.maxIdleConns, d)
 
-	req, err := createHTTPGetRequestWithTrace(ctx, os.Args[1])
+	req, err := createHTTPGetRequestWithTrace(ctx, c.url)
 	if err != nil {
 		log.Fatal(err)
 	}
-	for {
+
+	for i := 0; i < c.numRequests; i++ {
 		resp, err := client.Do(req)
 		if err != nil {
 			panic("disconnect")
