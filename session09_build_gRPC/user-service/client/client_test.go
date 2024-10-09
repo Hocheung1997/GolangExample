@@ -43,8 +43,10 @@ func startTestGprcServer() (*grpc.Server, *bufconn.Listener) {
 }
 
 func TestGetUser(t *testing.T) {
+	// start up the Test server with buffconn, return the listener for client
 	s, l := startTestGprcServer()
 	defer s.GracefulStop()
+	// grpc.WithContextDialer require a function return net.conn, Dailing address in it
 	bufconnDialer := func(ctx context.Context, addr string) (net.Conn, error) {
 		return l.Dial()
 	}
